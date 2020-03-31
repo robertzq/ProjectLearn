@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gradex_cloud.dao.UserDao">
+
+	<select id="getUserByUsername"
+		resultType="com.gradex_cloud.pojo.UserVo">
+		SELECT
+		u.USERACCOUNT
+		userAccount,
+		u.USERNAME userName,
+		u.DEPID
+		deptId,
+		u.USERPASSWORD pwd,
+		u.ISACTIVE isActive,
+		u.ID id,
+		 u.ADDRESS address,
+		    u.TELEPHONE telephone,
+		    u.EMAIL email,
+		    u.COMPANY company,
+		u.ERRORCOUNT 	errorCount
+	
+		FROM G_USER u LEFT JOIN G_DEPARTMENT dept
+		ON u.DEPID=dept.ID
+		where u.USERACCOUNT=#{userAccount,jdbcType=VARCHAR}
+
+	</select>
+
+	<select id="getUserRolesByUserAccount"
+		resultType="java.lang.String">
+		SELECT R.RNAME
+		ROLE
+		FROM G_USER U, G_USERROLE UR, G_ROLE R
+		WHERE U.ID = UR.USERID
+		AND R.ID = UR.ROLEID
+		AND R.RSTATUS = '1'
+		AND
+		U.USERACCOUNT=#{userAccount}
+	</select>
+
+	<select id="getUserRolesIdByUserAccount"
+		resultType="java.lang.String">
+		SELECT R.ID
+		id
+		FROM G_USER U, G_USERROLE UR, G_ROLE R
+		WHERE U.ID = UR.USERID
+		AND R.ID = UR.ROLEID
+		AND R.RSTATUS = '1'
+		AND
+		U.USERACCOUNT=#{userAccount}
+	</select>
+	
+	<resultMap type="com.gradex_cloud.pojo.UserVo" id="RoleMap">
+		<id column="ID" property="id" />
+		<result column="USERACCOUNT" property="userAccount" />
+		<result column="USERPASSWORD" property="pwd" />
+		<result column="USERNAME" property="userName" />
+		<result column="DEPID" property="deptId" />
+		<result column="ISACTIVE" property="isActive" />
+		<result column="LASTUPDATETIME" property="lastUpdateTime" />
+		<result column="LASTUPDATEUSER_ID" property="lastUpdateUser" />
+		<result column="CREATETIME" property="createTime" />
+		<result column="LICENSENUMBER" property="licensenumber" />
+		<result column="ADDRESS" property="address" />
+		<result column="TELEPHONE" property="telephone" />
+		<result column="COMPANY" property="company" />
+		<result column="EMAIL" property="email" />
+		<result column="LICENSEISACTIVE" property="licenseIsActive" />
+		<result column="VCINO" property="vciNo" />
+		<result column="BARCODE" property="barCode" />
+		<result column="ROLENAME" property="roleName"/>
+		<result column="REPAIRSTATIONCODE" property="repairStationCode" />
+		<result column="REPAIRSTATIONNAME" property="repairStationName" />
+		<result column="REMARK" property="remark" />
+		<!-- 
+		<collection property="roleList" ofType="java.lang.String">
+			<id column="ROLEID" property="id" />
+		</collection>
+		 -->
+	</resultMap>
+
+	<!-- get user all information -->
+	<select id="getUserAllInfoById" resultMap="RoleMap">
+			SELECT
+				U.ID,
+				U.USERACCOUNT,
+				U.USERNAME,
+				U.USERPASSWORD,
+				U.DEPID,
+				U.ISACTIVE,
+				U.LASTUPDATETIME,
+				U.LASTUPDATEUSER_ID,
+				U.COMPANY,
+				U.CREATETIME,
+				U.ADDRESS,
+				U.TELEPHONE,
+				U.EMAIL,
+				(
+					SELECT
+						GROUP_CONCAT(role.RCNAME) roleName
+					FROM
+						g_role role,
+						g_userrole ur
+					WHERE
+						role.id = ur.ROLEID
+					AND ur.USERID = U.ID
+						<if test="condition !=null and condition !=''">
+					<if test="conditions.roleName!=null and conditions.roleName!=''">
+						AND role.RCNAME like CONCAT ('%',#{conditions.roleName},'%')
+					</if>
+					</if>
+				) rolename
+			FROM
+				g_user U
+			WHERE
+				U.USERACCOUNT != 'admin'
+		<if test="condition !=null and condition !=''">
+			AND (U.USERACCOUNT like CONCAT ('%',#{condition,jdbcType=VARCHAR},'%')
+			OR U.USERNAME like CONCAT ('%',#{condition,jdbcType=VARCHAR},'%'))
+		</if>
+		<if test="id!=null and id!=''">
+			AND U.ID = #{id}
+		</if>
+	</select>
+
+	<!-- get user little information by account -->
+	<select id="getlittleInfoByAccount"
+		resultType="com.gradex_cloud.pojo.UserVo">
+		SELECT U.USERACCOUNT,U.USERNAME,R.ROLEID,U.ISACTIVE FROM
+		g_user U, g_userrole R WHERE U.ID=R.ID AND
+		U.USERACCOUNT=#{userAccount,jdbcType=VARCHAR}
+	</select>
+
+	<!-- get user little information by some conditions -->
+	<select id="getlittleInfoByCondition"
+		resultMap="RoleMap">
+			SELECT
+				U.ID,
+				U.USERACCOUNT,
+				U.USERNAME,
+				U.USERPASSWORD,
+				U.DEPID,
+				U.ISACTIVE,
+				U.LASTUPDATETIME,
+				U.LASTUPDATEUSER_ID,
+				U.COMPANY,
+				U.CREATETIME,
+				U.ADDRESS,
+				U.TELEPHONE,
+				U.EMAIL,
+				(
+					SELECT
+						GROUP_CONCAT(role.RCNAME) roleName
+					FROM
+						g_role role,
+						g_userrole ur
+					WHERE
+						role.id = ur.ROLEID
+					AND ur.USERID = U.ID
+					
+					<if test="conditions.roleName!=null and conditions.roleName!=''">
+						AND role.RCNAME like CONCAT ('%',#{conditions.roleName},'%')
+					</if>
+				) rolename
+			FROM
+				g_user U
+			WHERE
+				U.USERACCOUNT != 'admin'
+		<if
+			test="conditions.userAccount!=null and conditions.userAccount!=''">
+			AND U.USERACCOUNT like CONCAT ('%',#{conditions.userAccount},'%')
+		</if>
+		<if test="conditions.userName!=null and conditions.userName!=''">
+			AND U.USERNAME like CONCAT ('%',#{conditions.userName},'%')
+		</if>
+	
+		
+		<if test="conditions.isActive!=null and conditions.isActive!=''">
+			AND U.ISACTIVE like CONCAT ('%',#{conditions.isActive},'%')
+		</if>
+		
+		
+	</select>
+
+	<!-- register a new user -->
+	<insert id="registerUser"
+		parameterType="com.gradex_cloud.pojo.UserVo" useGeneratedKeys="true"
+		keyProperty="newUser.id">
+		INSERT INTO G_USER
+		(USERACCOUNT, USERPASSWORD, USERNAME,
+		DEPID, ISACTIVE, LASTUPDATETIME, LASTUPDATEUSER_ID,
+		ERRORCOUNT,
+		CREATETIME, ADDRESS, TELEPHONE,EMAIL,COMPANY,REMARK)
+		VALUES(
+		#{newUser.userAccount,jdbcType=VARCHAR},
+		#{newUser.pwd,jdbcType=VARCHAR},
+		#{newUser.userName,jdbcType=VARCHAR},
+		#{newUser.deptId,jdbcType=VARCHAR},
+		#{newUser.isActive,jdbcType=CHAR},
+		now(),
+		#{newUser.lastUpdateUser,jdbcType=VARCHAR},
+		#{newUser.errorCount,jdbcType=INTEGER},
+		now(),
+		#{newUser.address,jdbcType=VARCHAR},
+		#{newUser.telephone,jdbcType=VARCHAR},
+		#{newUser.email,jdbcType=VARCHAR},
+		#{newUser.company,jdbcType=VARCHAR},
+		#{newUser.remark,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- add a new user license number -->
+	<insert id="addLicenseNumber"
+		parameterType="com.gradex_cloud.pojo.UserVo">
+		INSERT INTO G_USERLICENSE
+		(LICENSENUMBER,LICENSEISACTIVE,USERID)
+		VALUES(
+		#{newUser.licensenumber,jdbcType=VARCHAR},
+		#{newUser.licenseIsActive,jdbcType=VARCHAR},
+		#{newUser.id,jdbcType=INTEGER}
+		)
+	</insert>
+
+	<!-- update a user -->
+	<update id="updateUserInfoByAccount"
+		parameterType="com.gradex_cloud.pojo.UserVo">
+		UPDATE G_USER
+		SET
+		<if test="Info.pwd != null">
+			USERPASSWORD=#{Info.pwd,jdbcType=VARCHAR},
+		</if>
+		USERNAME=#{Info.userName,jdbcType=VARCHAR},
+		ISACTIVE=#{Info.isActive,jdbcType=CHAR},
+		DEPID=#{Info.deptId,jdbcType=VARCHAR},
+		LASTUPDATETIME=now(),
+		LASTUPDATEUSER_ID=#{Info.lastUpdateUser,jdbcType=VARCHAR},
+		ADDRESS=#{Info.address,jdbcType=VARCHAR},
+		TELEPHONE=#{Info.telephone,jdbcType=VARCHAR},
+		EMAIL=#{Info.email,jdbcType=VARCHAR},
+		COMPANY=#{Info.company,jdbcType=VARCHAR},
+		REMARK=#{Info.remark,jdbcType=VARCHAR}
+		WHERE USERACCOUNT =
+		#{Info.userAccount,jdbcType=VARCHAR}
+	</update>
+
+
+
+	<select id="getUserResources" parameterType="java.util.HashMap"
+		resultType="com.gradex_cloud.pojo.ResourceVo">
+		SELECT DISTINCT T.ID,
+		T.G_URLPATTERN URLPATTERN,
+		T.G_TYPE RESOURCETYPE,
+		T.G_DESC RESOURCEDESC,
+		T.G_PID PARENTID,
+		T.G_ORDER,
+		T.RESOURCE_CODE
+		RESOURCECODE,
+		T2.RNAME ROLE
+		FROM G_RESOURCE T,G_ROLERESOURCE T1,G_ROLE
+		T2
+		WHERE T1.ROLEID = T2.ID
+		<if test="role != null">
+			<foreach close=")" collection="role" index="index"
+				item="item" open="AND t2.RNAME IN (" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		AND (t.ID=t1.RESOURCEID)
+		AND T.G_ISSHOW = '1'
+		ORDER BY T.G_ORDER ASC
+	</select>
+
+	<update id="updateUserByPrimaryKey"
+		parameterType="com.gradex_cloud.pojo.UserVo">
+		UPDATE G_USER
+		SET
+		ISACTIVE = #{isActive,jdbcType=VARCHAR}
+		WHERE ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateUserErrorCountByPrimaryKey"
+		parameterType="com.gradex_cloud.pojo.UserVo">
+		UPDATE G_USER
+		SET
+		ERRORCOUNT =
+		#{errorCount,jdbcType=VARCHAR}
+		WHERE ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="resetUserPwd">
+		UPDATE G_USER SET USERPASSWORD =
+		#{pwd,jdbcType=VARCHAR} where
+		USERACCOUNT = #{account,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="insertUserRole">
+		INSERT INTO G_USERROLE(USERID,ROLEID) VALUES(
+		#{userId,jdbcType=VARCHAR},
+		#{roleId,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="getResetPwdToken" resultType="java.lang.String">
+		SELECT RESET_PWD_TOKEN
+		resetPwdToken
+		FROM G_USER
+		WHERE
+		USERACCOUNT=#{userAccount,jdbcType=VARCHAR}
+	</select>
+
+	<update id="setResetPwdToken">
+		UPDATE G_USER SET RESET_PWD_TOKEN =
+		#{resetPwdToken,jdbcType=VARCHAR}
+		WHERE
+		USERACCOUNT=#{userAccount,jdbcType=VARCHAR}
+	</update>
+
+	
+
+	<update id="deleteRoleById" parameterType="java.lang.Integer">
+		DELETE from G_ROLE 
+		 WHERE ID=#{id,jdbcType=INTEGER}
+	</update>
+
+
+	
+
+	<delete id="deleteUserRoleRelation"
+		parameterType="java.lang.Integer">
+		delete from g_userrole  where
+		userid=#{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insertUserRoleRelation"
+		parameterType="com.gradex_cloud.pojo.UserVo">
+		insert into g_userrole (USERID,ROLEID) VALUES
+		<foreach collection="userVo.roleList" item="item"
+			index="index" separator=",">
+			(#{userVo.id,jdbcType=VARCHAR},#{item,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+
+    <insert id="batchInsertUserList" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id"
+		>
+    	INSERT 
+    	INTO G_USER
+		(USERACCOUNT, USERPASSWORD, USERNAME,DEPID, ISACTIVE,CREATETIME, ADDRESS, TELEPHONE,EMAIL,COMPANY) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.userAccount,jdbcType=VARCHAR},#{item.pwd,jdbcType=VARCHAR},#{item.userName,jdbcType=VARCHAR},1,1,now(),
+			#{item.address,jdbcType=VARCHAR},#{item.telephone,jdbcType=VARCHAR},#{item.email,jdbcType=VARCHAR},#{item.company,jdbcType=VARCHAR})
+		</foreach>
+    </insert>
+    
+	
+
+	<delete id="deleteUserById" parameterType="java.lang.Integer">
+		delete from g_user
+		where id=#{id,jdbcType=INTEGER}
+	</delete>
+
+	<delete id="deleteLicenseNumberByUserId"
+		parameterType="java.lang.Integer">
+		delete from g_userlicense where
+		USERID=#{id,jdbcType=INTEGER}
+	</delete>
+
+	<select id="getUserNameCount" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(1) from g_user where useraccount=
+		#{account,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getLicenseInfoByUserId" parameterType="java.lang.Integer"
+		resultType="com.gradex_cloud.pojo.UserVo">
+		select ID,LICENSENUMBER,LICENSEISACTIVE ,USERID from g_userlicense where USERID =#{id,jdbcType=INTEGER}
+	</select>
+
+    <select id="getUserRoleList" resultType="java.lang.Integer">
+    select g_userrole.ROLEID from g_user ,g_userrole
+     where g_user.id=g_userrole.USERID and g_user.id=#{id}
+    </select>
+
+    
+    
+    <select id="getActiveUserCount" resultType="java.lang.Integer">
+    SELECT COUNT(1) FROM G_USER, G_USERROLE WHERE G_USER.ID = G_USERROLE.USERID AND G_USERROLE.ROLEID=3
+    </select>
+</mapper>

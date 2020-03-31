@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop-reference-model>
+<aop-project name="gradex_cloud_config-service"/>
+<aop-project name="gradex_cloud_zuul"/>
+<aop-project name="gradex_cloud_security"/>
+<aop-project name="gradex_cloud_config-service-consumer"/>
+<aop-project name="gradex_cloud_config-service-client"/>
+<aop-project name="gradex_cloud_turbine-hystrix-dashboard"/>
+</aop-reference-model>
