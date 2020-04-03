@@ -63,4 +63,39 @@ public class MLinkedList {
         }
         System.out.println(sb.toString());
     }
+
+    public MNode insertNodeAtIndex(int index,MNode nodeToInsert){
+        if(index>length()){
+            System.out.println("index out of bounds");
+            return head;
+        }
+        MNode pointer=head;
+        for(int i=0;i<index;i++){
+            pointer=pointer.next;
+        }
+        nodeToInsert.next=pointer.next;
+        pointer.next=nodeToInsert;
+        return head;
+    }
+
+    public void appendNode(MNode nodeToAppend){
+        insertNodeAtIndex(length(),nodeToAppend);
+    }
+
+    public void deleteNodeAtIndex(int index){
+        MNode pointer=head;
+        for(int i=0;i<index;i++){
+            pointer=pointer.next;
+        }
+        if(pointer.next.next==null){
+            pointer.next=null;
+        }else {
+            pointer.next = pointer.next.next;
+        }
+
+    }
+
+    public void pop(){
+        deleteNodeAtIndex(length()-1);
+    }
 }
