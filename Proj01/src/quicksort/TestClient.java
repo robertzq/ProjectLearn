@@ -10,7 +10,6 @@ import linkedlist.MNode;
 public class TestClient {
 	public static void main(String[] args) {
 		int[] array = generateRandomArray(5);
-
 		printArray(array);
 		//	quick sort
 		new MQuickSort().toSort(array,0,array.length-1);
@@ -23,12 +22,12 @@ public class TestClient {
 //		printArray(array1);
 
 		MLinkedList mLinkedList=new MLinkedList();
-		mLinkedList.createLinkedList(3,2,3,4);
-		mLinkedList.printLinkedList();
-		mLinkedList.deleteNodeAtIndex(2);
-		mLinkedList.printLinkedList();
-		mLinkedList.pop();
-		mLinkedList.printLinkedList();
+		mLinkedList.createLinkedList(5,2,3,4,8,6);
+		for(int i=0;i<mLinkedList.length();i++){
+			System.out.println(mLinkedList.getNodeAtIndex(i));
+		}
+
+
 	}
 
 	private static void printArray(int[] array) {

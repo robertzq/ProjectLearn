@@ -5,7 +5,6 @@ public class MLinkedList {
     protected MNode head = new MNode();
 
     private MNode createLinkedList() {
-
         return createLinkedList(1, 0);
     }
 
@@ -22,7 +21,7 @@ public class MLinkedList {
 
     public MNode getNodeAtIndex(int index) {
         MNode p = head;
-        for (int i = 0; i < index; i++) {
+        for (int i = 0; i < index + 1; i++) {
             p = p.next;
         }
         return p;
@@ -64,38 +63,46 @@ public class MLinkedList {
         System.out.println(sb.toString());
     }
 
-    public MNode insertNodeAtIndex(int index,MNode nodeToInsert){
-        if(index>length()){
+    public MNode insertNodeAtIndex(int index, MNode nodeToInsert) {
+        if (index > length()) {
             System.out.println("index out of bounds");
             return head;
         }
-        MNode pointer=head;
-        for(int i=0;i<index;i++){
-            pointer=pointer.next;
+        MNode pointer = head;
+        for (int i = 0; i < index; i++) {
+            pointer = pointer.next;
         }
-        nodeToInsert.next=pointer.next;
-        pointer.next=nodeToInsert;
+        nodeToInsert.next = pointer.next;
+        pointer.next = nodeToInsert;
         return head;
     }
 
-    public void appendNode(MNode nodeToAppend){
-        insertNodeAtIndex(length(),nodeToAppend);
+    public void appendNode(MNode nodeToAppend) {
+        insertNodeAtIndex(length(), nodeToAppend);
     }
 
-    public void deleteNodeAtIndex(int index){
-        MNode pointer=head;
-        for(int i=0;i<index;i++){
-            pointer=pointer.next;
+    public void deleteNodeAtIndex(int index) {
+        MNode pointer = head;
+        for (int i = 0; i < index; i++) {
+            pointer = pointer.next;
         }
-        if(pointer.next.next==null){
-            pointer.next=null;
-        }else {
+        if (pointer.next.next == null) {
+            pointer.next = null;
+        } else {
             pointer.next = pointer.next.next;
         }
 
     }
 
-    public void pop(){
-        deleteNodeAtIndex(length()-1);
+    public MNode pop() {
+        MNode node = getNodeAtIndex(length() - 1);
+        deleteNodeAtIndex(length() - 1);
+        return node;
+    }
+
+    public MNode deQueue() {
+        MNode node = getNodeAtIndex(0);
+        deleteNodeAtIndex(0);
+        return node;
     }
 }
