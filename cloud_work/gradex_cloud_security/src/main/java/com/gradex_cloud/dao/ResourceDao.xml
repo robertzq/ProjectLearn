@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gradex_cloud.dao.ResourceDao">
+<select id="getAllResource" resultType="com.gradex_cloud.pojo.ResourceVo">
+ 	SELECT DISTINCT T.ID id,
+		T.G_URLPATTERN urlPattern,
+		T.G_TYPE resourceType,
+		T.G_DESC resourceDesc,
+		T.G_PID parentId,
+		T.RESOURCE_CODE resourceCode,
+		T2.RNAME role
+		FROM G_RESOURCE T, G_ROLERESOURCE T1, G_ROLE T2
+			WHERE T.ID = T1.RESOURCEID
+		 AND T1.ROLEID = T2.ID
+ 	</select>
+</mapper>
