@@ -23,8 +23,8 @@
 hs_err_pid*
 
 .metadata/
-/.recommenders/
-/.settings/
+.recommenders/
+.settings/
 /bin/
 .classpath
 .project
