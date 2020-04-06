@@ -5,48 +5,50 @@ import java.awt.*;
 
 public class Mg2Panel extends JPanel {
     private JFrame frame;
-    int delta;
+    private int delta;
+    private int[][] datas;
 
-    public Mg2Panel(JFrame frame) {
+    public Mg2Panel(JFrame frame,int deltaSec,int[][] data) {
         super();
         this.frame = frame;
+        this.delta = deltaSec;
+        this.datas=data;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawLine(g,Color.BLACK,"测试标题",20,20);
-        for(int i=0;i<10;i++) {
-            System.out.println(delta);
-            drawRect(g, Color.ORANGE, 100, 5, 300 + i*5, 20);
-            delta++;
+        System.out.println("current second:"+delta);
+        paintChart(g);
 
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    }
+
+    public void paintChart(Graphics g) {
+
+        String[] titleList = new String[]{"中国","英国","美国","法国","俄罗斯"};
+        Color[] clist = new Color[]{Color.RED,Color.ORANGE,Color.GREEN,Color.BLUE,Color.GRAY};
+        for(int i=0;i<5;i++) {
+            drawLine(g, Color.BLACK, titleList[i], 20, 20+25*i);
+            drawRect(g, clist[i], 100, 5+25*i, 3*datas[delta][i] + delta * 5, 20);
         }
-      //  drawLine(g,Color.BLACK,"测试标题",20,20);
-      //  drawRect(g,Color.ORANGE,100,5,300,20);
     }
 
     // 填充一个矩形
-    private void drawRect(Graphics g,Color color,int x,int y,int width,int height){
-        System.out.println("draw rect");
+    private void drawRect(Graphics g, Color color, int x, int y, int width, int height) {
+
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(color);
-        g2d.fillRect(x,y,width,height);
+        g2d.fillRect(x, y, width, height);
         g2d.dispose();
     }
 
     //绘制字体
-    private void drawLine(Graphics g,Color color,String content,int x,int y) {
+    private void drawLine(Graphics g, Color color, String content, int x, int y) {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(color);
-        g2d.drawString(content,x,y);
+        g2d.drawString(content, x, y);
         g2d.dispose();
     }
 }
