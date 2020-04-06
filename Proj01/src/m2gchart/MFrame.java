@@ -11,7 +11,7 @@ public class MFrame extends JFrame implements ActionListener {
     private JButton btn;
     private int deltaSec;
     Timer timer = new Timer(1000, this);
-    private int[][] datas = new int[][]{{100, 150, 30, 45, 34}, {28, 78, 48, 26, 45}, {28, 34, 45, 500, 23}, {20, 343, 45, 45, 45}};
+    private int[][] datas = new int[][]{{100, 20, 66, 41, 34}, {28, 78, 96, 26, 45}, {28, 34, 72, 18, 23}, {20, 48, 21, 30, 17},{30, 58, 81, 20, 67}};
 
     public MFrame() {
         super("图表测试");
